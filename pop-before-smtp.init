@@ -102,7 +102,7 @@ else
 	OPTIONS="$OPTIONS --nomappedv6"
 fi
 
-
+RETVAL=0
 # See how we were called.
 case "$1" in
   start)
@@ -118,9 +118,10 @@ case "$1" in
 		if [ $RETVAL -eq 0 ]; then
 			touch /var/lock/subsys/popbsmtp
 			echo $CPID >/var/run/pop-before-smtp.pid
-			deltext; ok;
+			ok;
 		else
-			deltext; fail;
+			RETVAL=1
+			fail;
 		fi
 	else
 		msg_already_running "POP-before-SMTP"
@@ -132,25 +133,23 @@ case "$1" in
 	if [ -f /var/lock/subsys/popbsmtp ]; then
 		msg_stopping "POP-before-SMTP"
 		killproc pop-before-smtp
-		rm -f /var/lock/subsys/popbsmtp >/dev/null 2>&1
-		rm -f /var/run/pop-before-smtp.pid >/dev/null 2>&1
+		rm -f /var/lock/subsys/popbsmtp /var/run/pop-before-smtp.pid >/dev/null 2>&1
 	else
 		msg_not_running "POP-before-SMTP"
-		exit 1
 	fi
-															
 	;;
   status)
-  	status pop-before-smtp
+	status pop-before-smtp
 	exit $?
 	;;
-  restart|reload)
+  restart|force-reload)
 	$0 stop
 	$0 start
+	exit $?
 	;;
   *)
-	msg_usage "$0 {start|stop|restart|reload|status}"
-	exit 1
+	msg_usage "$0 {start|stop|restart|force-reload|status}"
+	exit 3
 esac
 
 exit $RETVAL
