@@ -3,7 +3,7 @@ Summary:	watch log for pop/imap auth, notify Postfix to allow relay
 Summary(pl):	Przesy³anie poczty przez postfiksa na podstawie logowañ przez POP/IMAP
 Name:		pop-before-smtp
 Version:	1.28
-Release:	4
+Release:	5
 License:	Freely Redistributable
 Group:		Networking/Daemons
 Source0:	http://people.oven.com/bet/pop-before-smtp/%{name}-%{version}.tar.gz
@@ -53,7 +53,7 @@ install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/popbsmtp
 install pop-before-smtp $RPM_BUILD_ROOT%{_sbindir}/
 
 pod2man pop-before-smtp >$RPM_BUILD_ROOT%{_mandir}/man8/pop-before-smtp.8
-echo ".so pop-before-smtp" >$RPM_BUILD_ROOT%{_mandir}/man8/popbsmtp.8
+echo ".so pop-before-smtp.8" >$RPM_BUILD_ROOT%{_mandir}/man8/popbsmtp.8
 
 touch $RPM_BUILD_ROOT%{_pkglibdir}/pop-before-smtp.db
 
