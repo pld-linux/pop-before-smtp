@@ -7,6 +7,7 @@ Release:	3
 License:	freely distributable
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/popbsmtp/%{name}-%{version}.tar.gz
+# Source0-md5:	012d7e9b4f73572eb499562ba252701d
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Patch0:		%{name}-config.patch
