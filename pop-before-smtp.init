@@ -29,9 +29,54 @@ if is_no "${NETWORKING}"; then
 	exit 1
 fi
 
-if [ -n  "$PATTERN_NAME" ]; then
+if [ -n "$PATTERN_NAME" ]; then
 	OPTIONS="--pattern-name=$PATTERN_NAME"
 fi
+
+# Autodetect pop3daemon.
+WILLUSEDEFAULT="0"
+if [ -z "$RPM_PROVIDES_POP3" ]; then
+    RPM_PROVIDES_POP3="pop3daemon"	
+fi
+if [ -z "$RPM_PROVIDES_IMAP" ]; then
+    RPM_PROVIDES_IMAP="imapdaemon"	
+fi
+
+if [ "$PATTERN_NAME" = "auto" ]; then
+	RPM_RESPONSE=`rpm -q --whatprovides "$RPM_PROVIDES_POP3" | cut -d ' ' -f 1` 2>/dev/null;
+	if [ $? -ne 0 ]; then
+	    RPM_RESPONSE=`rpm -q --whatprovides "$RPM_PROVIDES_IMAP" | cut -d ' ' -f 1` 2>/dev/null;
+	fi
+	
+	case "$RPM_RESPONSE" in
+	    cyrus*)
+			PATTERN_NAME="cyrus"
+			;;
+	    uw*)
+			PATTERN_NAME="uw"
+			;;
+	    UW*)
+			PATTERN_NAME="uw"
+			;;
+	    solid-pop3d*)
+			PATTERN_NAME="spop3d"
+			;;
+	    cyrus*)
+			PATTERN_NAME="cyrus"
+			;;
+	    qmail*)
+			PATTERN_NAME="qmail"
+			;;
+	    qpopper*)
+			PATTERN_NAME="qpopper_all"
+			;;
+	    *)		
+			WILLUSEDEFAULT="1"
+			;;
+	esac
+fi
+
+# Parse rest of options
 if [ -n "$LOGFILE" ]; then
 	OPTIONS="$OPTIONS --logfile=$LOGFILE"
 else
@@ -55,7 +100,7 @@ case "$1" in
 	if [ ! -f /var/lock/subsys/popbsmtp ]; then
 		msg_starting "POP-before-SMTP"
 		busy
-	 	/usr/sbin/pop-before-smtp $OPTIONS &
+		/usr/sbin/pop-before-smtp $OPTIONS &
 		sleep 1
 		ps -C pop-before-smtp >/dev/null 2>&1
 		RETVAL=$?

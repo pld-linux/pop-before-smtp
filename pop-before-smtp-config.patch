@@ -1,5 +1,6 @@
---- pop-before-smtp-1.15/pop-before-smtp.wiget	Mon Jul 31 20:02:40 2000
-+++ pop-before-smtp-1.15/pop-before-smtp	Tue Aug  8 19:22:11 2000
+diff -ur pop-before-smtp-1.15.orig/pop-before-smtp pop-before-smtp-1.15/pop-before-smtp
+--- pop-before-smtp-1.15.orig/pop-before-smtp	Mon Jul 31 20:02:40 2000
++++ pop-before-smtp-1.15/pop-before-smtp	Tue Sep 12 15:57:02 2000
 @@ -184,63 +184,79 @@
  # File to watch for pop3d/imapd records
  my $logfile = '/var/log/maillog';
@@ -73,9 +74,9 @@
 +	cucipop => '^(... .. ..:..:..) \S+ cucipop\[\d+\]: \S+ ' .
 +		'(\d+\.\d+\.\d+\.\d+) \d+, \d+ \(\d+\), \d+ \(\d+\)',
  
-+# for Solid POP3d by Artur Frysiak <wiget@pld.org.pl>:
++# For Solid POP3d by Artur Frysiak <wiget@pld.org.pl>:
 +	spop3d => '^(... .. ..:..:..) \S+ spop3d\[\d+\]: ' . 
-+		'user \S+ authenticated - \S+ \((\d+\.\d+\.\d+\.\d+)\)$',
++		'user \S+ authenticated - (\d+\.\d+\.\d+\.\d+)',
 +);
  
  my $dbfile = '/etc/postfix/pop-before-smtp'; # DB hash to write

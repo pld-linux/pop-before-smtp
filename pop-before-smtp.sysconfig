@@ -7,9 +7,14 @@ LOGFILE="/var/log/maillog"
 # pop-before-smtp access map for Postfix
 DBFILE="/etc/mail/pop-before-smtp"
 
-# Select name of pattern to use (uw|cyrus|courier|qmail)
-PATTERN_NAME="uw"
+# Select name of pattern to use (uw|cyrus|courier|qmail|spop3d|auto)
+# 'auto' option will activate automagical method of pop3daemon detection
+PATTERN_NAME="auto"
 
 # How log allow send mail after pop (in seconds)
 GRACE="1800"
 
+# Used when 'auto' option is given to ask RPM about type of daemon used in system
+# You can ommit it to use the defaults
+RPM_PROVIDES_POP3="pop3daemon"
+RPM_PROVIDES_IMAP="imapdaemon"
