@@ -1,44 +1,81 @@
---- pop-before-smtp-1.11/pop-before-smtp.wiget	Fri Apr 14 01:17:18 2000
-+++ pop-before-smtp-1.11/pop-before-smtp	Tue May  9 15:35:23 2000
-@@ -123,39 +123,51 @@
- # Flags
- my $write = 1;
- my $debug = 0;
-+my $cyrus = 0;
- 
+--- pop-before-smtp-1.15/pop-before-smtp.wiget	Mon Jul 31 20:02:40 2000
++++ pop-before-smtp-1.15/pop-before-smtp	Tue Aug  8 19:22:11 2000
+@@ -184,63 +184,79 @@
  # File to watch for pop3d/imapd records
  my $logfile = '/var/log/maillog';
  
 +# Default pattern name
-+my $pattern_name  = "uw";
++my $pattern_name = "uw";
 +
  # This regex pull the lines I'm interested in out of $logfile, and yanks out
  # the timestamp and IP address
  
++my %patterns = (
  # For UW ipop3d/imapd, pattern tweaked by Stig Hackvan <stig@hackvan.com>
 -my $pat = '^(... .. ..:..:..) \S+ (?:ipop3d|imapd)\[\d+\]: ' .
 -          '(?:Login|Authenticated|Auth) user=\S+ host=(?:\S+ )?\[(\d+\.\d+\.\d+\.\d+)\]';
-+my %patterns = (
 +	uw => '^(... .. ..:..:..) \S+ (?:ipop3d|imapd)\[\d+\]: ' .
-+          '(?:Login|Authenticated|Auth) user=\S+ host=(?:\S+ )?\[(\d+\.\d+\.\d+\.\d+)\]',
++		'(?:Login|Authenticated|Auth) user=\S+ host=(?:\S+ )?\[(\d+\.\d+\.\d+\.\d+)\]',
  
- # For Cyrus, Kenn Martin <kmartin@infoteam.com> used:
+ # There are many, many different logfile formats emitted by various
+ # qpoppers. Here's an attempt to match any of them, but for all
+ # I know it might also match failed logins, or something else.
+-# my $pat = '^(... .. ..:..:..) \S+ q?popper\S+\[\d+\]: .*\s(\d+.\d+.\d+.\d+)$'
++	qpopper_all => '^(... .. ..:..:..) \S+ q?popper\S+\[\d+\]: .*\s(\d+.\d+.\d+.\d+)$',
+ 
+ # For Cyrus, Kenn Martin <kmartin@infoteam.com>, with tweak
+ # from William Yodlowsky for IP addrs that don't resolve:
 -# my $pat = '^(... .. ..:..:..) \S+ (?:pop3d|imapd)\[\d+\]: ' .
--#           'login: \S+\[(\d+\.\d+\.\d+\.\d+)\] \S+ \S+';
+-#           'login: \S*\[(\d+\.\d+\.\d+\.\d+)\] \S+ \S+';
 +	cyrus => '^(... .. ..:..:..) \S+ (?:pop3d|imapd)\[\d+\]: ' .
-+           'login: \S+\[(\d+\.\d+\.\d+\.\d+)\] \S+ \S+',
++		'login: \S*\[(\d+\.\d+\.\d+\.\d+)\] \S+ \S+',
  
  # For Courier-IMAP:
 -#my $pat = '^(... .. ..:..:..) \S+ imaplogin: ' .
 -#          'LOGIN, user=\S+, ip=\[(\d+\.\d+\.\d+\.\d+)\]$';
 +	courier => '^(... .. ..:..:..) \S+ imaplogin: ' .
-+          'LOGIN, user=\S+, ip=\[(\d+\.\d+\.\d+\.\d+)\]$',
++		'LOGIN, user=\S+, ip=\[(\d+\.\d+\.\d+\.\d+)\]$',
  
  # For qmail's pop3d:
 -#my $pat = '^(... .. ..:..:..) \S+ vpopmail\[\d+\]: ' .
 -#          'vchkpw: login \[\S+\] from (\d+\.\d+\.\d+\.\d+)$';
 +	qmail => '^(... .. ..:..:..) \S+ vpopmail\[\d+\]: ' .
-+          'vchkpw: login \[\S+\] from (\d+\.\d+\.\d+\.\d+)$'
++		'vchkpw: login \[\S+\] from (\d+\.\d+\.\d+\.\d+)$',
+ 
+ # For Qpopper POP/APOP Server
+-# my $pat = '^(... .. ..:..:..) \S+ (?:qpopper)\[\d+\]: Stats: \S+ ' .
+-#           '(?:\d+ ){4}(\d+.\d+.\d+.\d+)';
++	qpopper => '^(... .. ..:..:..) \S+ (?:qpopper)\[\d+\]: Stats: \S+ ' .
++           '(?:\d+ ){4}(\d+.\d+.\d+.\d+)',
+ 
+ # Alex Burke's popper install
+-# my $pat = '^(... .. ..:..:..) \S+ popper\[\d+\]: Stats: \S+ ' .
+-#           '(?:\d+ ){4}(?:\S+ )?(\d+.\d+.\d+.\d+)$';
++	brukes_popper => '^(... .. ..:..:..) \S+ popper\[\d+\]: Stats: \S+ ' .
++           '(?:\d+ ){4}(?:\S+ )?(\d+.\d+.\d+.\d+)$',
+ 
+ # Chris D.Halverson's pattern for Qpopper 3.0b29 on Solaris 2.6
+-# my $pat = '^(\w{3} \w{3} \d{2} \d{2}:\d{2}:\d{2} \d{4}) \[\d+\] ' .
+-#           ' Stats:\s+\w+ \d \d \d \d [\w\.]+ (\d+\.\d+\.\d+\.\d+)';
++	halverson_qpopper => '^(\w{3} \w{3} \d{2} \d{2}:\d{2}:\d{2} \d{4}) \[\d+\] ' .
++		' Stats:\s+\w+ \d \d \d \d [\w\.]+ (\d+\.\d+\.\d+\.\d+)',
+ 
+ # Nick Bauer <nickb@inc.net> has something completely different as
+ # a qpopper logfile format
+-# my $pat = '^(... .. ..:..:..) \S+ qpopper\S+\[\d+\]: \([^)]*\) POP login ' .
+-#           'by user "[^"]+" at \([^)]+\) (\d+.\d+.\d+.\d+)$'
++	nickb_qpopper => '^(... .. ..:..:..) \S+ qpopper\S+\[\d+\]: \([^)]*\) POP login ' .
++		'by user "[^"]+" at \([^)]+\) (\d+.\d+.\d+.\d+)$',
+ 
+ # For cucipop, matching a sample from Daniel Roesen:
+-# my $pat = '^(... .. ..:..:..) \S+ cucipop\[\d+\]: \S+ ' .
+-#           '(\d+\.\d+\.\d+\.\d+) \d+, \d+ \(\d+\), \d+ \(\d+\)';
++	cucipop => '^(... .. ..:..:..) \S+ cucipop\[\d+\]: \S+ ' .
++		'(\d+\.\d+\.\d+\.\d+) \d+, \d+ \(\d+\), \d+ \(\d+\)',
+ 
++# for Solid POP3d by Artur Frysiak <wiget@pld.org.pl>:
++	spop3d => '^(... .. ..:..:..) \S+ spop3d\[\d+\]: ' . 
++		'user \S+ authenticated - \S+ \((\d+\.\d+\.\d+\.\d+)\)$',
 +);
  
  my $dbfile = '/etc/postfix/pop-before-smtp'; # DB hash to write
@@ -52,17 +89,18 @@
  	"debug!" => \$debug,
  	"dbfile=s" => \$dbfile,
  	"grace=i" => \$grace,
--) or die "syntax: $0 [--[no]write] [--[no]debug] [--logfile=filename] " .
--	"[--dbfile=filename] [--grace=seconds]\n";
 +	"logfile=s" => \$logfile,
 +	"pattern-name=s" => \$pattern_name,
-+) or 
-+	die "syntax: $0 [--[no]write] [--[no]debug] [--logfile=filename] [--dbfile=filename] [--grace=seconds] [--pattern-name=(".join ('|', keys(%patterns)) .")]\n";
-+
+ ) or die "syntax: $0 [--[no]write] [--[no]debug] [--logfile=filename] " .
+-	"[--dbfile=filename] [--grace=seconds]\n";
++	"[--dbfile=filename] [--grace=seconds] " .
++	"[--pattern-name=(" . 
++	join('|', keys(%patterns)) . 
++	")]\n";
  
  # These parameters control how closely the watcher tries to follow the
  # logfile, which affects how much resources it consumes, and how quickly
-@@ -190,6 +202,13 @@
+@@ -289,6 +305,13 @@
  	}
  	return @r;
  }
