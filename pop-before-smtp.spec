@@ -2,7 +2,7 @@
 Summary:	watch log for pop/imap auth, notify Postfix to allow relay
 Name:		pop-before-smtp
 Version:	1.15
-Release:	1
+Release:	3
 License:	Freely Redistributable
 Group:		Networking/Daemons
 Group(pl):	Sieciowe/Serwery
@@ -26,7 +26,7 @@ relaying for people who have recently downloaded their email.
 
 %prep
 %setup  -q
-%patch0 -p1 -b .wiget
+%patch0 -p1
 
 %build
 
