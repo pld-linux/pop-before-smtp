@@ -5,7 +5,7 @@ SERVICE_RUN_NICE_LEVEL="+2"
 LOGFILE="/var/log/maillog"
 
 # pop-before-smtp access map for Postfix
-DBFILE="/etc/mail/pop-before-smtp"
+DBFILE="/var/lib/popbsmtp/pop-before-smtp"
 
 # Select name of pattern to use (uw|cyrus|courier|qmail|spop3d|auto)
 # 'auto' option will activate automagical method of pop3daemon detection

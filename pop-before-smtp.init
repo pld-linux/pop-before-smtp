@@ -13,7 +13,7 @@
 # Source networking configuration.
 . /etc/sysconfig/network
 
-DBFILE="/etc/mail/pop-before-smtp"
+DBFILE="/var/lib/popbsmtp/pop-before-smtp"
 CYRUS="no"
 GRACE="1800"
 
