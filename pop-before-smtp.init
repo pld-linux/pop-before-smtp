@@ -19,54 +19,58 @@ GRACE="1800"
 
 # Try get config..
 if [ -f /etc/sysconfig/popbsmtp ]; then
-     . /etc/sysconfig/popbsmtp
-fi     
+	. /etc/sysconfig/popbsmtp
+fi 
 	
 # Check that networking is up.
-if is_no "${NETWORKING}"; then
-        # nls "ERROR: Networking is down. %s can't be run." <service>
-        msg_Network_Down "POP-before-SMTP"
-	exit 1
+if is_yes "${NETWORKING}"; then
+	if [ ! -f /var/lock/subsys/network ]; then
+		# nls "ERROR: Networking is down. %s can't be run." <service>
+		msg_network_down "POP-before-SMTP"
+		exit 1
+	fi
+else
+	exit 0
 fi
 
 # Autodetect pop3daemon.
 WILLUSEDEFAULT="0"
 if [ -z "$RPM_PROVIDES_POP3" ]; then
-    RPM_PROVIDES_POP3="pop3daemon"	
+	RPM_PROVIDES_POP3="pop3daemon"	
 fi
 if [ -z "$RPM_PROVIDES_IMAP" ]; then
-    RPM_PROVIDES_IMAP="imapdaemon"	
+	RPM_PROVIDES_IMAP="imapdaemon"	
 fi
 
 if [ "$PATTERN_NAME" = "auto" ]; then
 	RPM_RESPONSE=`rpm -q --whatprovides "$RPM_PROVIDES_POP3" | cut -d ' ' -f 1` 2>/dev/null;
 	if [ $? -ne 0 ]; then
-	    RPM_RESPONSE=`rpm -q --whatprovides "$RPM_PROVIDES_IMAP" | cut -d ' ' -f 1` 2>/dev/null;
+		RPM_RESPONSE=`rpm -q --whatprovides "$RPM_PROVIDES_IMAP" | cut -d ' ' -f 1` 2>/dev/null;
 	fi
 	
 	case "$RPM_RESPONSE" in
-	    cyrus*)
-			PATTERN_NAME="cyrus"
-			;;
-	    uw*)
-			PATTERN_NAME="uw"
-			;;
-	    UW*)
-			PATTERN_NAME="uw"
-			;;
-	    solid-pop3d*)
-			PATTERN_NAME="spop3d"
-			;;
-	    cyrus*)
-			PATTERN_NAME="cyrus"
-			;;
-	    qmail*)
-			PATTERN_NAME="qmail"
-			;;
-	    qpopper*)
-			PATTERN_NAME="qpopper_all"
-			;;
-	    *)		
+	  cyrus*)
+		PATTERN_NAME="cyrus"
+		;;
+	  uw*)
+		PATTERN_NAME="uw"
+		;;
+	  UW*)
+		PATTERN_NAME="uw"
+		;;
+	  solid-pop3d*)
+		PATTERN_NAME="spop3d"
+		;;
+	  cyrus*)
+		PATTERN_NAME="cyrus"
+		;;
+	  qmail*)
+		PATTERN_NAME="qmail"
+		;;
+	  qpopper*)
+		PATTERN_NAME="qpopper_all"
+		;;
+	  *)		
 			WILLUSEDEFAULT="1"
 			;;
 	esac
@@ -98,6 +102,7 @@ else
 	OPTIONS="$OPTIONS --nomappedv6"
 fi
 
+
 # See how we were called.
 case "$1" in
   start)
@@ -118,36 +123,34 @@ case "$1" in
 			deltext; fail;
 		fi
 	else
-		msg_Already_Running "POP-before-SMTP"
+		msg_already_running "POP-before-SMTP"
 		exit 1
 	fi
 
-        ;;
+	;;
   stop)
-        if [ -f /var/lock/subsys/popbsmtp ]; then
-        	msg_stopping "POP-before-SMTP"
-		#busy
-        	killproc pop-before-smtp
-		#deltext; ok;
-        	rm -f /var/lock/subsys/popbsmtp >/dev/null 2>&1
-        	rm -f /var/run/pop-before-smtp.pid >/dev/null 2>&1
-        else
-	        msg_Not_Running "POP-before-SMTP"
-                exit 1
-        fi
+	if [ -f /var/lock/subsys/popbsmtp ]; then
+		msg_stopping "POP-before-SMTP"
+		killproc pop-before-smtp
+		rm -f /var/lock/subsys/popbsmtp >/dev/null 2>&1
+		rm -f /var/run/pop-before-smtp.pid >/dev/null 2>&1
+	else
+		msg_not_running "POP-before-SMTP"
+		exit 1
+	fi
 															
-        ;;
+	;;
   status)
   	status pop-before-smtp
 	exit $?
 	;;
-  restart)
+  restart|reload)
 	$0 stop
 	$0 start
 	;;
   *)
-        msg_Usage "$0 {start|stop|status|restart}"
-        exit 1
+	msg_usage "$0 {start|stop|restart|reload|status}"
+	exit 1
 esac
 
 exit $RETVAL
