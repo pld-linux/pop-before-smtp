@@ -22,3 +22,6 @@ MAPPED_V6="yes"
 # You can ommit it to use the defaults
 RPM_PROVIDES_POP3="pop3daemon"
 RPM_PROVIDES_IMAP="imapdaemon"
+
+# Uncomment for additional options, for example debugging info.
+#OTHER="--debug"
