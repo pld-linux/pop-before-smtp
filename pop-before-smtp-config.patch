@@ -1,0 +1,78 @@
+--- pop-before-smtp-1.11/pop-before-smtp.wiget	Fri Apr 14 01:17:18 2000
++++ pop-before-smtp-1.11/pop-before-smtp	Tue May  9 15:35:23 2000
+@@ -123,39 +123,51 @@
+ # Flags
+ my $write = 1;
+ my $debug = 0;
++my $cyrus = 0;
+ 
+ # File to watch for pop3d/imapd records
+ my $logfile = '/var/log/maillog';
+ 
++# Default pattern name
++my $pattern_name  = "uw";
++
+ # This regex pull the lines I'm interested in out of $logfile, and yanks out
+ # the timestamp and IP address
+ 
+ # For UW ipop3d/imapd, pattern tweaked by Stig Hackvan <stig@hackvan.com>
+-my $pat = '^(... .. ..:..:..) \S+ (?:ipop3d|imapd)\[\d+\]: ' .
+-          '(?:Login|Authenticated|Auth) user=\S+ host=(?:\S+ )?\[(\d+\.\d+\.\d+\.\d+)\]';
++my %patterns = (
++	uw => '^(... .. ..:..:..) \S+ (?:ipop3d|imapd)\[\d+\]: ' .
++          '(?:Login|Authenticated|Auth) user=\S+ host=(?:\S+ )?\[(\d+\.\d+\.\d+\.\d+)\]',
+ 
+ # For Cyrus, Kenn Martin <kmartin@infoteam.com> used:
+-# my $pat = '^(... .. ..:..:..) \S+ (?:pop3d|imapd)\[\d+\]: ' .
+-#           'login: \S+\[(\d+\.\d+\.\d+\.\d+)\] \S+ \S+';
++	cyrus => '^(... .. ..:..:..) \S+ (?:pop3d|imapd)\[\d+\]: ' .
++           'login: \S+\[(\d+\.\d+\.\d+\.\d+)\] \S+ \S+',
+ 
+ # For Courier-IMAP:
+-#my $pat = '^(... .. ..:..:..) \S+ imaplogin: ' .
+-#          'LOGIN, user=\S+, ip=\[(\d+\.\d+\.\d+\.\d+)\]$';
++	courier => '^(... .. ..:..:..) \S+ imaplogin: ' .
++          'LOGIN, user=\S+, ip=\[(\d+\.\d+\.\d+\.\d+)\]$',
+ 
+ # For qmail's pop3d:
+-#my $pat = '^(... .. ..:..:..) \S+ vpopmail\[\d+\]: ' .
+-#          'vchkpw: login \[\S+\] from (\d+\.\d+\.\d+\.\d+)$';
++	qmail => '^(... .. ..:..:..) \S+ vpopmail\[\d+\]: ' .
++          'vchkpw: login \[\S+\] from (\d+\.\d+\.\d+\.\d+)$'
++);
+ 
+ my $dbfile = '/etc/postfix/pop-before-smtp'; # DB hash to write
+ my $grace = 1800; # 30 minutes --- grace period
+ 
++my $pattern_msg;
++my $pat;
++
+ GetOptions(
+ 	"write!" => \$write,
+ 	"debug!" => \$debug,
+ 	"dbfile=s" => \$dbfile,
+ 	"grace=i" => \$grace,
+-) or die "syntax: $0 [--[no]write] [--[no]debug] [--logfile=filename] " .
+-	"[--dbfile=filename] [--grace=seconds]\n";
++	"logfile=s" => \$logfile,
++	"pattern-name=s" => \$pattern_name,
++) or 
++	die "syntax: $0 [--[no]write] [--[no]debug] [--logfile=filename] [--dbfile=filename] [--grace=seconds] [--pattern-name=(".join ('|', keys(%patterns)) .")]\n";
++
+ 
+ # These parameters control how closely the watcher tries to follow the
+ # logfile, which affects how much resources it consumes, and how quickly
+@@ -190,6 +202,13 @@
+ 	}
+ 	return @r;
+ }
++
++if ( exists ($patterns{$pattern_name}) ) {
++	$pat = $patterns{$pattern_name};
++} else {
++	die "Pattern $pattern_name not supported.\n";
++}
++
+ my @mynets = cleanup_nets(`postconf mynetworks`);
+ while (my @tmp = grep { $mynets[$_] =~ m#^/# } 0..$#mynets) {
+ 	for (reverse @tmp) {
