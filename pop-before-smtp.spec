@@ -3,8 +3,8 @@ Summary:	watch log for pop/imap auth, notify Postfix to allow relay
 Summary(pl):	Przesy³anie poczty przez postfiksa na podstawie logowañ przez POP/IMAP
 Name:		pop-before-smtp
 Version:	1.29
-Release:	2
-License:	Freely distributable
+Release:	3
+License:	freely distributable
 Group:		Networking/Daemons
 Source0:	http://prdownloads.sourceforge.net/popbsmtp/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
@@ -64,8 +64,6 @@ echo ".so pop-before-smtp.8" >$RPM_BUILD_ROOT%{_mandir}/man8/popbsmtp.8
 
 touch $RPM_BUILD_ROOT%{_pkglibdir}/pop-before-smtp.db
 
-gzip -9nf README
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -87,7 +85,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc README.gz
+%doc README
 %attr(755,root,root) %{_sbindir}/pop-before-smtp
 %attr(754,root,root) /etc/rc.d/init.d/popbsmtp
 %config(noreplace) %verify(not mtime size md5) /etc/sysconfig/popbsmtp
