@@ -2,7 +2,7 @@
 Summary:	watch log for pop/imap auth, notify Postfix to allow relay
 Name:		pop-before-smtp
 Version:	1.21
-Release:	2
+Release:	3
 License:	Freely Redistributable
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
