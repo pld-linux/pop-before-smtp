@@ -12,6 +12,7 @@ Source2:	%{name}.sysconfig
 Patch0:		%{name}-config.patch
 Patch1:		%{name}-comments.patch
 Patch2:		%{name}-db_location.patch
+Patch3:		%{name}-ignore_ipv6.patch
 Requires:	postfix
 Requires(preun):	/sbin/chkconfig
 Requires(post):	/sbin/chkconfig
@@ -43,6 +44,7 @@ mo¿e zezwalaæ na wysy³anie przez niego poczty.
 %patch0 -p1
 %patch1 -p1
 %patch2	-p1
+%patch3	-p0
 
 %install
 rm -rf $RPM_BUILD_ROOT
