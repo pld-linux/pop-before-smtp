@@ -1,12 +1,12 @@
 %include	/usr/lib/rpm/macros.perl
 Summary:	watch log for pop/imap auth, notify Postfix to allow relay
 Name:		pop-before-smtp
-Version:	1.9
+Version:	1.11
 Release:	1
 Source0:	https://fridge.oven.com/~bet/bent/SOURCES/pop-before-smtp-%{version}.tar.gz
 Source1:	pop-before-smtp.init
 Source2:	pop-before-smtp.sysconfig
-Patch0:		pop-before-smtp-cyrus.patch
+Patch0:		pop-before-smtp-config.patch
 License:	Freely Redistributable
 Group:		Networking/Daemons
 Requires:	postfix
@@ -25,7 +25,7 @@ downloaded their email.
 
 %prep
 %setup  -q
-%patch0 -p1
+%patch0 -p1 -b .wiget
 
 %build
 
@@ -39,6 +39,7 @@ install %{SOURCE2} -m644 $RPM_BUILD_ROOT/etc/sysconfig/popbsmtp
 install pop-before-smtp $RPM_BUILD_ROOT%{_sbindir}/
 
 pod2man pop-before-smtp >$RPM_BUILD_ROOT%{_mandir}/man8/pop-before-smtp.8
+echo ".so pop-before-smtp" >$RPM_BUILD_ROOT%{_mandir}/man8/popbsmtp.8
 
 gzip -9nf README \
 	$RPM_BUILD_ROOT%{_mandir}/man8/*
@@ -67,6 +68,6 @@ rm -rf $RPM_BUILD_ROOT
 %doc README.gz
 %attr(755,root,root) %{_sbindir}/pop-before-smtp
 %attr(755,root,root) /etc/rc.d/init.d/popbsmtp
-/etc/sysconfig/popbsmtp
+%config(noreplace) %verify(not mtime size md5) /etc/sysconfig/popbsmtp
 
-%doc %{_mandir}/man8/pop-before-smtp.8*
+%doc %{_mandir}/man8/*
