@@ -3,24 +3,25 @@ Summary:	watch log for pop/imap auth, notify Postfix to allow relay
 Name:		pop-before-smtp
 Version:	1.11
 Release:	1
+License:	Freely Redistributable
+Group:		Networking/Daemons
+Group(pl):	Sieciowe/Serwery
 Source0:	https://fridge.oven.com/~bet/bent/SOURCES/pop-before-smtp-%{version}.tar.gz
 Source1:	pop-before-smtp.init
 Source2:	pop-before-smtp.sysconfig
 Patch0:		pop-before-smtp-config.patch
-License:	Freely Redistributable
-Group:		Networking/Daemons
 Requires:	postfix
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
- Spam prevention requires preventing open relaying through email servers.
+Spam prevention requires preventing open relaying through email servers.
 However, legit users want to be able to relay. If legit users always stayed
 in one spot, they'd be easy to describe to the daemon. However, what with
 roving laptops, logins from home, etc., legit users refuse to stay in one
-spot.  pop-before-smtp watches the mail log, looking for successful
-pop/imap logins, and posts the originating IP address into a database which
-can be checked by Postfix, to allow relaying for people who have recently
+spot. pop-before-smtp watches the mail log, looking for successful pop/imap
+logins, and posts the originating IP address into a database which can be
+checked by Postfix, to allow relaying for people who have recently
 downloaded their email.
 
 %prep
@@ -32,10 +33,10 @@ downloaded their email.
 %install
 rm -rf $RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT{/etc/{sysconfig,rc.d/init.d},%{_sbindir},%{_mandir}/man8}
+install -d $RPM_BUILD_ROOT{%{_sysconfdir}/{sysconfig,rc.d/init.d},%{_sbindir},%{_mandir}/man8}
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/popbsmtp
-install %{SOURCE2} -m644 $RPM_BUILD_ROOT/etc/sysconfig/popbsmtp
+install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/popbsmtp
 install pop-before-smtp $RPM_BUILD_ROOT%{_sbindir}/
 
 pod2man pop-before-smtp >$RPM_BUILD_ROOT%{_mandir}/man8/pop-before-smtp.8
