@@ -6,6 +6,7 @@ Release:	3
 License:	Freely Redistributable
 Group:		Networking/Daemons
 Group(pl):	Sieciowe/Serwery
+Group(de):	Netzwerkwesen/Server
 Source0:	http://people.oven.com/bet/pop-before-smtp/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
