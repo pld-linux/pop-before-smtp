@@ -6,13 +6,15 @@ Version:	1.29
 Release:	1
 License:	Freely Redistributable
 Group:		Networking/Daemons
-Source0:	http://prdownloads.sourceforge.net/popbsmtp/%{name}-1.30.tar.gz
+Source0:	http://prdownloads.sourceforge.net/popbsmtp/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Patch0:		%{name}-config.patch
 Patch1:		%{name}-comments.patch
 Patch2:		%{name}-db_location.patch
 Patch3:		%{name}-ignore_ipv6.patch
+Patch4:		%{name}-OK.patch
+Patch5:		%{name}-mappedv6.patch
 URL:		http://popbsmtp.sourceforge.net/
 Requires:	postfix
 Requires(preun):	/sbin/chkconfig
@@ -46,6 +48,8 @@ mo¿e zezwalaæ na wysy³anie przez niego poczty.
 %patch1 -p1
 %patch2	-p1
 %patch3	-p0
+%patch4	-p1
+%patch5	-p1
 
 %install
 rm -rf $RPM_BUILD_ROOT
