@@ -94,7 +94,7 @@
 +
 +# For Solid POP3d by Artur Frysiak <wiget@pld.org.pl>:
 +       spop3d => '^(... .. ..:..:..) \S+ spop3d\[\d+\]: ' .
-+               'user \S+ authenticated - (\d+\.\d+\.\d+\.\d+)');
++               '(?:mapped )?user \S+ authenticated - (\d+\.\d+\.\d+\.\d+)');
  
  my $dbfile = '/etc/postfix/pop-before-smtp'; # DB hash to write
  my $grace = 1800; # 30 minutes --- grace period
