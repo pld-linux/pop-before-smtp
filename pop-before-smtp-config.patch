@@ -1,6 +1,6 @@
---- pop-before-smtp-1.18/pop-before-smtp.wiget	Mon Sep 18 01:55:52 2000
-+++ pop-before-smtp-1.18/pop-before-smtp	Mon Sep 18 14:44:06 2000
-@@ -206,70 +206,91 @@
+--- pop-before-smtp-1.28/pop-before-smtp	Sat Jan  6 22:05:05 2001
++++ pop-before-smtp-1.28/pop-before-smtp.wiget	Fri Aug  3 00:05:28 2001
+@@ -296,6 +296,10 @@
  # File to watch for pop3d/imapd records
  my $logfile = '/var/log/maillog';
  
@@ -8,9 +8,10 @@
 +my $pattern_name = "uw";
 +my $pattern_name2 = "gnupop3d";
 +
+ my $me = getpwuid($<); # real me
+ # Build complete sanitary environment
  # If postconf isn't somewhere on this PATH, do fix the PATH so it is
- $ENV{'PATH'} = '/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/sbin:/usr/local/bin';
- 
+@@ -309,60 +313,69 @@
  # This regex pull the lines I'm interested in out of $logfile, and yanks out
  # the timestamp and IP address
  
@@ -18,75 +19,82 @@
  # For UW ipop3d/imapd, pattern tweaked by Stig Hackvan <stig@hackvan.com>
 -my $pat = '^(... .. ..:..:..) \S+ (?:ipop3d|imapd)\[\d+\]: ' .
 -          '(?:Login|Authenticated|Auth) user=\S+ host=(?:\S+ )?\[(\d+\.\d+\.\d+\.\d+)\](?: nmsgs=\d+/\d+)?$';
-+	uw => '^(... .. ..:..:..) \S+ (?:ipop3d|imapd)\[\d+\]: ' .
-+          '(?:Login|Authenticated|Auth) user=\S+ host=(?:\S+ )?\[(\d+\.\d+\.\d+\.\d+)\](?: nmsgs=\d+/\d+)?$',
++uw => '^(... .. ..:..:..) \S+ (?:ipop3d|imapd)\[\d+\]: ' .
++           '(?:Login|Authenticated|Auth) user=\S+ host=(?:\S+ )?\[(\d+\.\d+\.\d+\.\d+)\](?: nmsgs=\d+/\d+)?$',
  
  # Bennett Todd to add support for GNU pop3d
 -my $pat2 = '^(... .. ..:..:..) \S+ gnu-pop3d\[\d+\]: ' .
--	  'User .* logged in with mailbox .* from (\d+\.\d+\.\d+\.\d+)$';
-+	gnupop3d => '^(... .. ..:..:..) \S+ gnu-pop3d\[\d+\]: ' .
-+	  'User .* logged in with mailbox .* from (\d+\.\d+\.\d+\.\d+)$',
+-      'User .* logged in with mailbox .* from (\d+\.\d+\.\d+\.\d+)$';
++gnupop3d => '^(... .. ..:..:..) \S+ gnu-pop3d\[\d+\]: ' .
++      'User .* logged in with mailbox .* from (\d+\.\d+\.\d+\.\d+)$',
  
  # There are many, many different logfile formats emitted by various
  # qpoppers. Here's an attempt to match any of them, but for all
  # I know it might also match failed logins, or something else.
--# my $pat = '^(... .. ..:..:..) \S+ q?popper\S+\[\d+\]: .*\s(\d+.\d+.\d+.\d+)$'
-+	qpopper_all => '^(... .. ..:..:..) \S+ q?popper\S+\[\d+\]: .*\s(\d+.\d+.\d+.\d+)$',
- 
+-# my $pat = '^(... .. ..:..:..) \S+ q?popper\S+\[\d+\]: .*\s(\d+.\d+.\d+.\d+)$';
+-
++qpopper_all => '^(... .. ..:..:..) \S+ q?popper\S+\[\d+\]: .*\s(\d+.\d+.\d+.\d+)$',
++ 
  # For Cyrus, Kenn Martin <kmartin@infoteam.com>, with tweak
  # from William Yodlowsky for IP addrs that don't resolve:
 -# my $pat = '^(... .. ..:..:..) \S+ (?:pop3d|imapd)\[\d+\]: ' .
 -#           'login: \S*\[(\d+\.\d+\.\d+\.\d+)\] \S+ \S+';
-+	cyrus => '^(... .. ..:..:..) \S+ (?:pop3d|imapd)\[\d+\]: ' .
++cyrus => '^(... .. ..:..:..) \S+ (?:pop3d|imapd)\[\d+\]: ' .
 +           'login: \S*\[(\d+\.\d+\.\d+\.\d+)\] \S+ \S+',
  
  # For Courier-IMAP:
 -#my $pat = '^(... .. ..:..:..) \S+ imaplogin: ' .
 -#          'LOGIN, user=\S+, ip=\[(\d+\.\d+\.\d+\.\d+)\]$';
-+	courier => '^(... .. ..:..:..) \S+ imaplogin: ' .
++courier => '^(... .. ..:..:..) \S+ imaplogin: ' .
 +          'LOGIN, user=\S+, ip=\[(\d+\.\d+\.\d+\.\d+)\]$',
  
  # For qmail's pop3d:
 -#my $pat = '^(... .. ..:..:..) \S+ vpopmail\[\d+\]: ' .
 -#          'vchkpw: login \[\S+\] from (\d+\.\d+\.\d+\.\d+)$';
-+	qmail => '^(... .. ..:..:..) \S+ vpopmail\[\d+\]: ' .
++qmail => '^(... .. ..:..:..) \S+ vpopmail\[\d+\]: ' .
 +          'vchkpw: login \[\S+\] from (\d+\.\d+\.\d+\.\d+)$',
  
  # For Qpopper POP/APOP Server
 -# my $pat = '^(... .. ..:..:..) \S+ (?:qpopper)\[\d+\]: Stats: \S+ ' .
 -#           '(?:\d+ ){4}(\d+.\d+.\d+.\d+)';
-+	qpopper => '^(... .. ..:..:..) \S+ (?:qpopper)\[\d+\]: Stats: \S+ ' .
++qpopper => '^(... .. ..:..:..) \S+ (?:qpopper)\[\d+\]: Stats: \S+ ' .
 +           '(?:\d+ ){4}(\d+.\d+.\d+.\d+)',
  
  # Alex Burke's popper install
 -# my $pat = '^(... .. ..:..:..) \S+ popper\[\d+\]: Stats: \S+ ' .
 -#           '(?:\d+ ){4}(?:\S+ )?(\d+.\d+.\d+.\d+)$';
-+	brukes_popper => '^(... .. ..:..:..) \S+ popper\[\d+\]: Stats: \S+ ' .
++burkes_popper => '^(... .. ..:..:..) \S+ popper\[\d+\]: Stats: \S+ ' .
 +           '(?:\d+ ){4}(?:\S+ )?(\d+.\d+.\d+.\d+)$',
  
  # Chris D.Halverson's pattern for Qpopper 3.0b29 on Solaris 2.6
 -# my $pat = '^(\w{3} \w{3} \d{2} \d{2}:\d{2}:\d{2} \d{4}) \[\d+\] ' .
 -#           ' Stats:\s+\w+ \d \d \d \d [\w\.]+ (\d+\.\d+\.\d+\.\d+)';
-+	halverson_qpopper => '^(\w{3} \w{3} \d{2} \d{2}:\d{2}:\d{2} \d{4}) \[\d+\] ' .
+-
++halverson_qpopper => '^(\w{3} \w{3} \d{2} \d{2}:\d{2}:\d{2} \d{4}) \[\d+\] ' .
 +           ' Stats:\s+\w+ \d \d \d \d [\w\.]+ (\d+\.\d+\.\d+\.\d+)',
- 
++ 
  # Nick Bauer <nickb@inc.net> has something completely different as
  # a qpopper logfile format
 -# my $pat = '^(... .. ..:..:..) \S+ qpopper\S+\[\d+\]: \([^)]*\) POP login ' .
--#           'by user "[^"]+" at \([^)]+\) (\d+.\d+.\d+.\d+)$'
-+	nickb_qpopper => '^(... .. ..:..:..) \S+ qpopper\S+\[\d+\]: \([^)]*\) POP login ' .
-+           'by user "[^"]+" at \([^)]+\) (\d+.\d+.\d+.\d+)$',
- 
+-#           'by user "[^"]+" at \([^)]+\) (\d+.\d+.\d+.\d+)$';
+-
++nickb_qpopper => '^(... .. ..:..:..) \S+ qpopper\S+\[\d+\]: \([^)]*\) POP login ' .
++            'by user "[^"]+" at \([^)]+\) (\d+.\d+.\d+.\d+)$',
++ 
  # For cucipop, matching a sample from Daniel Roesen:
 -# my $pat = '^(... .. ..:..:..) \S+ cucipop\[\d+\]: \S+ ' .
 -#           '(\d+\.\d+\.\d+\.\d+) \d+, \d+ \(\d+\), \d+ \(\d+\)';
-+	cucipop => '^(... .. ..:..:..) \S+ cucipop\[\d+\]: \S+ ' .
++cucipop => '^(... .. ..:..:..) \S+ cucipop\[\d+\]: \S+ ' .
 +           '(\d+\.\d+\.\d+\.\d+) \d+, \d+ \(\d+\), \d+ \(\d+\)',
-+		   
+ 
+ # For popa3d with the patch from bartek marcinkiewicz <jr@rzeznia.eu.org>
+ # (available in contrib/popa3d/):
+-# my $pat = '^(... .. ..:..:..) \S+ popa3d\[\d+\]: Authentication passed for \S+ -- \[(\d+.\d+.\d+.\d+)\]$';
++popa3d => '^(... .. ..:..:..) \S+ popa3d\[\d+\]: Authentication passed for \S+ -- \[(\d+.\d+.\d+.\d+)\]$', 
++
 +# For Solid POP3d by Artur Frysiak <wiget@pld.org.pl>:
-+	spop3d => '^(... .. ..:..:..) \S+ spop3d\[\d+\]: ' .
-+		'user \S+ authenticated - (\d+\.\d+\.\d+\.\d+)',
-+);
++       spop3d => '^(... .. ..:..:..) \S+ spop3d\[\d+\]: ' .
++               'user \S+ authenticated - (\d+\.\d+\.\d+\.\d+)');
  
  my $dbfile = '/etc/postfix/pop-before-smtp'; # DB hash to write
  my $grace = 1800; # 30 minutes --- grace period
@@ -96,41 +104,41 @@
 +my $pat2;
 +
  GetOptions(
- 	"write!" => \$write,
- 	"flock!" => \$flock,
- 	"debug!" => \$debug,
- 	"dbfile=s" => \$dbfile,
- 	"grace=i" => \$grace,
-+	"logfile=s" => \$logfile,
-+	"pattern-name=s" => \$pattern_name,
-+	"second-pattern-name=s" => \$pattern_name2,
- ) or die "syntax: $0 [--[no]write] [--[no]debug] [--logfile=filename] " .
--	"[--dbfile=filename] [--grace=seconds]\n";
-+	"[--dbfile=filename] [--grace=seconds] " .
-+	"[--logfile=filename] [--pattern-name=name] [--second-pattern-name=name]\n" .
-+	"Supported patterns: " .
-+	join(',', keys(%patterns)) .
-+	"\n";
+     "write!" => \$write,
+     "debug!" => \$debug,
+@@ -370,8 +383,14 @@
+     "logfile=s" => \$logfile,
+     "dbfile=s" => \$dbfile,
+     "grace=i" => \$grace,
++    "pattern-name=s" => \$pattern_name,
++    "second-pattern-name=s" => \$pattern_name2,
+ ) or die "syntax: $0 [--[no]write] [--[no]debug] [--[no]flock] " .
+-    "[--logfile=filename] [--dbfile=filename] [--grace=seconds]\n";
++    "[--logfile=filename] [--dbfile=filename] [--grace=seconds]" .
++	"[--pattern-name=name] [--second-pattern-name=name]\n" .
++       "Supported patterns: " .
++       join(',', keys(%patterns)) .
++       "\n";
  
  $flock = 0 unless $write; # flocking makes no sense if you're not writing
  
-@@ -320,6 +341,19 @@
- 	}
- 	return @r;
+@@ -422,6 +441,19 @@
+     }
+     return @r;
  }
 +
 +if ( exists ($patterns{$pattern_name}) ) {
-+	$pat = $patterns{$pattern_name};
++       $pat = $patterns{$pattern_name};
 +} else {
-+	die "pattern $pattern_name not supported.\n";
++       die "pattern $pattern_name not supported.\n";
 +}
 +
 +if ( exists ($patterns{$pattern_name2}) ) {
-+	$pat2 = $patterns{$pattern_name2};
++       $pat2 = $patterns{$pattern_name2};
 +} else {
-+	die "pattern $pattern_name2 not supported.\n";
++       die "pattern $pattern_name2 not supported.\n";
 +}
 +
  my @mynets = cleanup_nets(`postconf mynetworks`);
  while (my @tmp = grep { $mynets[$_] =~ m#^/# } 0..$#mynets) {
- 	for (reverse @tmp) {
+     for (reverse @tmp) {
