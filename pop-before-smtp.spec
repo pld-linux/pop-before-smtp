@@ -15,14 +15,14 @@ BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-Spam prevention requires preventing open relaying through email servers.
-However, legit users want to be able to relay. If legit users always stayed
-in one spot, they'd be easy to describe to the daemon. However, what with
-roving laptops, logins from home, etc., legit users refuse to stay in one
-spot. pop-before-smtp watches the mail log, looking for successful pop/imap
-logins, and posts the originating IP address into a database which can be
-checked by Postfix, to allow relaying for people who have recently
-downloaded their email.
+Spam prevention requires preventing open relaying through email
+servers. However, legit users want to be able to relay. If legit users
+always stayed in one spot, they'd be easy to describe to the daemon.
+However, what with roving laptops, logins from home, etc., legit users
+refuse to stay in one spot. pop-before-smtp watches the mail log,
+looking for successful pop/imap logins, and posts the originating IP
+address into a database which can be checked by Postfix, to allow
+relaying for people who have recently downloaded their email.
 
 %prep
 %setup  -q
