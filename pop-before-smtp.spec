@@ -3,27 +3,38 @@ Summary:	watch log for pop/imap auth, notify Postfix to allow relay
 Summary(pl):	Przesy³anie poczty przez postfiksa na podstawie logowañ przez POP/IMAP
 Name:		pop-before-smtp
 Version:	1.28
-Release:	3
+Release:	4
 License:	Freely Redistributable
 Group:		Networking/Daemons
 Group(cs):	Sí»ové/Démoni
+Group(da):	Netværks/Dæmoner
 Group(de):	Netzwerkwesen/Server
 Group(es):	Red/Servidores
 Group(fr):	Réseau/Serveurs
+Group(is):	Net/Púkar
+Group(it):	Rete/Demoni
+Group(no):	Nettverks/Daemoner
 Group(pl):	Sieciowe/Serwery
 Group(pt):	Rede/Servidores
-Group(ru):	óÅÔÅ×ÙÅ/äÅÍÏÎÙ
+Group(ru):	óÅÔØ/äÅÍÏÎÙ
+Group(sl):	Omre¾ni/Stre¾niki
+Group(sv):	Nätverk/Demoner
+Group(uk):	íÅÒÅÖÁ/äÅÍÏÎÉ
 Source0:	http://people.oven.com/bet/pop-before-smtp/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Patch0:		%{name}-config.patch
 Patch1:		%{name}-comments.patch
+Patch2:		%{name}-db_location.patch
 Requires:	postfix
-Prereq:		/sbin/chkconfig
+Requires(preun):	/sbin/chkconfig
+Requires(post):	/sbin/chkconfig
 BuildRequires:	perl-devel
 BuildRequires:	perl-File-Tail
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%define         _pkglibdir      /var/lib/popbsmtp
 
 %description
 Spam prevention requires preventing open relaying through email
@@ -45,10 +56,11 @@ mo¿e zezwalaæ na wysy³anie przez niego poczty.
 %setup  -q
 %patch0 -p1
 %patch1 -p1
+%patch2	-p1
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sysconfdir}/{sysconfig,rc.d/init.d},%{_sbindir},%{_mandir}/man8}
+install -d $RPM_BUILD_ROOT{%{_sysconfdir}/{sysconfig,rc.d/init.d},%{_sbindir},%{_mandir}/man8,%{_pkglibdir}}
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/popbsmtp
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/popbsmtp
@@ -57,13 +69,15 @@ install pop-before-smtp $RPM_BUILD_ROOT%{_sbindir}/
 pod2man pop-before-smtp >$RPM_BUILD_ROOT%{_mandir}/man8/pop-before-smtp.8
 echo ".so pop-before-smtp" >$RPM_BUILD_ROOT%{_mandir}/man8/popbsmtp.8
 
+touch $RPM_BUILD_ROOT%{_pkglibdir}/pop-before-smtp.db
+
 gzip -9nf README
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %post
-/sbin/chkconfig popbsmtp reset
+/sbin/chkconfig --add popbsmtp
 if [ -f /var/lock/subsys/popbsmtp ]; then
 	%{_sysconfdir}/rc.d/init.d/popbsmtp restart >&2 
 else
@@ -85,3 +99,5 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/popbsmtp
 %config(noreplace) %verify(not mtime size md5) /etc/sysconfig/popbsmtp
 %{_mandir}/man8/*
+%dir %{_pkglibdir}
+%ghost %{_pkglibdir}/pop-before-smtp.db
