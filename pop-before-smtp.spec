@@ -77,6 +77,6 @@ fi
 %defattr(644,root,root,755)
 %doc README.gz
 %attr(755,root,root) %{_sbindir}/pop-before-smtp
-%attr(755,root,root) /etc/rc.d/init.d/popbsmtp
+%attr(754,root,root) /etc/rc.d/init.d/popbsmtp
 %config(noreplace) %verify(not mtime size md5) /etc/sysconfig/popbsmtp
 %{_mandir}/man8/*
