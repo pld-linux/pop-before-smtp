@@ -25,7 +25,7 @@ Requires:	postfix
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define         _pkglibdir      /var/lib/popbsmtp
+%define		_pkglibdir	/var/lib/popbsmtp
 
 %description
 Spam prevention requires preventing open relaying through email
@@ -44,7 +44,7 @@ logowanie jest dopisywany do bazy danych, na podstawie której postfix
 mo¿e zezwalaæ na wysy³anie przez niego poczty.
 
 %prep
-%setup  -q
+%setup -q
 %patch0 -p1
 %patch1 -p1
 %patch2	-p1
