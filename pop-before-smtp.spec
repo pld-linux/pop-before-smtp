@@ -11,7 +11,7 @@ License:	Freely Redistributable
 Group:		Networking/Daemons
 Requires:	postfix
 BuildArch:	noarch
-BuildRoot:	/tmp/%{name}-%{version}-root
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
  Spam prevention requires preventing open relaying through email servers.
