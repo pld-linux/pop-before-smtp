@@ -54,11 +54,11 @@ mo¿e zezwalaæ na wysy³anie przez niego poczty.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sysconfdir}/{sysconfig,rc.d/init.d},%{_sbindir},%{_mandir}/man8,%{_pkglibdir}}
+install -d $RPM_BUILD_ROOT{/etc/{sysconfig,rc.d/init.d},%{_sbindir},%{_mandir}/man8,%{_pkglibdir}}
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/popbsmtp
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/popbsmtp
-install pop-before-smtp $RPM_BUILD_ROOT%{_sbindir}/
+install %{name} $RPM_BUILD_ROOT%{_sbindir}
 
 pod2man pop-before-smtp >$RPM_BUILD_ROOT%{_mandir}/man8/pop-before-smtp.8
 echo ".so pop-before-smtp.8" >$RPM_BUILD_ROOT%{_mandir}/man8/popbsmtp.8
