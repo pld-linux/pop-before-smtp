@@ -13,6 +13,7 @@ Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Patch0:		%{name}-config.patch
 Requires:	postfix
+BuildRequires:	perl-devel
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
