@@ -29,23 +29,23 @@ if is_no "${NETWORKING}"; then
 	exit 1
 fi
 
-if is_yes($CYRUS); then
-	$OPTIONS="--cyrus"
+if [ -n  "$PATTERN_NAME" ]; then
+	OPTIONS="--pattern-name=$PATTERN_NAME"
 fi
 if [ -n "$LOGFILE" ]; then
-	$OPTIONS="$OPTIONS --logfile=$LOGFILE"
+	OPTIONS="$OPTIONS --logfile=$LOGFILE"
 else
-	$OPTIONS="$OPTIONS --logfile=/var/log/mailog"
+	OPTIONS="$OPTIONS --logfile=/var/log/mailog"
 fi
 if [ -n "$DBFILE" ]; then
-	$OPTIONS="$OPTIONS --dbfile=$DBFILE"
+	OPTIONS="$OPTIONS --dbfile=$DBFILE"
 else
-	$OPTIONS="$OPTIONS --dbfile=$DBFILE"
+	OPTIONS="$OPTIONS --dbfile=$DBFILE"
 fi
 if [ -n "$GRACE" ]; then 
-	$OPTIONS="$OPTIONS --grace=$GRACE"
+	OPTIONS="$OPTIONS --grace=$GRACE"
 else
-	$OPTIONS="$OPTIONS --grace=180"
+	OPTIONS="$OPTIONS --grace=180"
 fi
 
 # See how we were called.

@@ -2,13 +2,13 @@
 SERVICE_RUN_NICE_LEVEL="+2"
 
 # IMAPD/POP3D log file
-LOGFILE="/var/log/mailog"
+LOGFILE="/var/log/maillog"
 
 # pop-before-smtp access map for Postfix
 DBFILE="/etc/mail/pop-before-smtp"
 
-# Enable Cyrus IMAPD/POP3D support
-CYRUS="no"
+# Select name of pattern to use (uw|cyrus|courier|qmail)
+PATTERN_NAME="uw"
 
 # How log allow send mail after pop (in seconds)
 GRACE="1800"
