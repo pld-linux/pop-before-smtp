@@ -4,7 +4,7 @@ Summary(pl):	Przesy³anie poczty przez postfiksa na podstawie logowañ przez POP/I
 Name:		pop-before-smtp
 Version:	1.29
 Release:	2
-License:	Freely Redistributable
+License:	Freely distributable
 Group:		Networking/Daemons
 Source0:	http://prdownloads.sourceforge.net/popbsmtp/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
