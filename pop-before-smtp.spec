@@ -6,8 +6,13 @@ Version:	1.28
 Release:	3
 License:	Freely Redistributable
 Group:		Networking/Daemons
+Group(cs):	SÌªovÈ/DÈmoni
 Group(de):	Netzwerkwesen/Server
+Group(es):	Red/Servidores
+Group(fr):	RÈseau/Serveurs
 Group(pl):	Sieciowe/Serwery
+Group(pt):	Rede/Servidores
+Group(ru):	Û≈‘≈◊Ÿ≈/‰≈ÕœŒŸ
 Source0:	http://people.oven.com/bet/pop-before-smtp/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
@@ -38,8 +43,8 @@ moøe zezwalaÊ na wysy≥anie przez niego poczty.
 
 %prep
 %setup  -q
-%patch0 -p1 -b .wiget
-%patch1 -p1 -b .wiget
+%patch0 -p1
+%patch1 -p1
 
 %install
 rm -rf $RPM_BUILD_ROOT
