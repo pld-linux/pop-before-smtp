@@ -1,0 +1,13 @@
+--- pop-before-smtp	Sat Apr 27 15:59:17 2002
++++ pop-before-smtp.my	Sat Apr 27 16:06:53 2002
+@@ -441,7 +437,9 @@
+         s/\s+$//;
+         s/\s+/ /g;
+         s/^mynetworks\s*=\s*//;
+-        push @r, split /[,\s]+/, $_;
++	my @f =split /[,\s]+/, $_;
++	@f=grep !/\[.*\]/,@f;
++        push @r,@f; 
+     }
+     return @r;
+ }
