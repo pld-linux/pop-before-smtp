@@ -1,12 +1,12 @@
 %include	/usr/lib/rpm/macros.perl
 Summary:	watch log for pop/imap auth, notify Postfix to allow relay
 Name:		pop-before-smtp
-Version:	1.11
+Version:	1.15
 Release:	1
 License:	Freely Redistributable
 Group:		Networking/Daemons
 Group(pl):	Sieciowe/Serwery
-Source0:	https://fridge.oven.com/~bet/bent/SOURCES/pop-before-smtp-%{version}.tar.gz
+Source0:	http://people.oven.com/bet/pop-before-smtp/pop-before-smtp-%{version}.tar.gz
 Source1:	pop-before-smtp.init
 Source2:	pop-before-smtp.sysconfig
 Patch0:		pop-before-smtp-config.patch
