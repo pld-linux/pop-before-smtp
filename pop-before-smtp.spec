@@ -1,8 +1,8 @@
 %include	/usr/lib/rpm/macros.perl
 Summary:	watch log for pop/imap auth, notify Postfix to allow relay
 Name:		pop-before-smtp
-Version:	1.15
-Release:	3
+Version:	1.18
+Release:	1
 License:	Freely Redistributable
 Group:		Networking/Daemons
 Group(pl):	Sieciowe/Serwery
@@ -27,7 +27,7 @@ relaying for people who have recently downloaded their email.
 
 %prep
 %setup  -q
-%patch0 -p1
+%patch0 -p1 -b .wiget
 
 %build
 
