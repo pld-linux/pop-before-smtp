@@ -14,6 +14,10 @@ PATTERN_NAME="auto"
 # How log allow send mail after pop (in seconds)
 GRACE="1800"
 
+# Should IPv4-mapped-on-IPv6 addresses be also included in the database?
+# This must be enabled for IPv6-enabled postfix on IPv6-enabled host
+MAPPED_V6="yes"
+
 # Used when 'auto' option is given to ask RPM about type of daemon used in system
 # You can ommit it to use the defaults
 RPM_PROVIDES_POP3="pop3daemon"

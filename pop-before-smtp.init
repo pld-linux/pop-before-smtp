@@ -92,6 +92,11 @@ if [ -n "$GRACE" ]; then
 else
 	OPTIONS="$OPTIONS --grace=180"
 fi
+if [ -n "$MAPPED_V6" ]; then 
+	OPTIONS="$OPTIONS --mappedv6"
+else
+	OPTIONS="$OPTIONS --nomappedv6"
+fi
 
 # See how we were called.
 case "$1" in
