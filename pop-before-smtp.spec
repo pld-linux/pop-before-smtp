@@ -65,7 +65,7 @@ rm -rf $RPM_BUILD_ROOT
 %post
 /sbin/chkconfig --add popbsmtp
 if [ -f /var/lock/subsys/popbsmtp ]; then
-	%{_sysconfdir}/rc.d/init.d/popbsmtp restart >&2 
+	%{_sysconfdir}/rc.d/init.d/popbsmtp restart >&2
 else
 	echo "Run \"/etc/rc.d/init.d/popbsmtp start\" to start pop-before-smtp daemon."
 fi
@@ -75,7 +75,7 @@ if [ "$1" = "0" ]; then
 	if [ -f /var/lock/subsys/popbsmtp ]; then
 		/etc/rc.d/init.d/popbsmtp stop
 	fi
-	/sbin/chkconfig --del popbsmtp 
+	/sbin/chkconfig --del popbsmtp
 fi
 
 %files
