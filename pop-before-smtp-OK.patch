@@ -1,0 +1,14 @@
+diff -durN pop-before-smtp-1.29.orig/pop-before-smtp pop-before-smtp-1.29/pop-before-smtp
+--- pop-before-smtp-1.29.orig/pop-before-smtp	Mon Apr 29 15:12:05 2002
++++ pop-before-smtp-1.29/pop-before-smtp	Mon Apr 29 15:12:55 2002
+@@ -498,8 +498,8 @@
+     $t{$ipaddr} = $ts;
+     next if $already_enabled;
+     flock(DB_FH, LOCK_EX) or die "$0: flock LOCK_EX failed: $!\n" if $flock;
+-    $db{$ipaddr} = "ok" if $write;
+-    print "\twritten ok\n" if $write and $debug;
++    $db{$ipaddr} = "OK" if $write;
++    print "\twritten OK\n" if $write and $debug;
+     while ($q[0][1] < time) {
+         if ($q[0][1] == $t{$q[0][0]}) {
+             print "purging ts=".localtime($q[0][1])." ip=$q[0][0]\n" if $debug;
