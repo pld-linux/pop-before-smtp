@@ -6,10 +6,10 @@ Release:	1
 License:	Freely Redistributable
 Group:		Networking/Daemons
 Group(pl):	Sieciowe/Serwery
-Source0:	http://people.oven.com/bet/pop-before-smtp/pop-before-smtp-%{version}.tar.gz
-Source1:	pop-before-smtp.init
-Source2:	pop-before-smtp.sysconfig
-Patch0:		pop-before-smtp-config.patch
+Source0:	http://people.oven.com/bet/pop-before-smtp/%{name}-%{version}.tar.gz
+Source1:	%{name}.init
+Source2:	%{name}.sysconfig
+Patch0:		%{name}-config.patch
 Requires:	postfix
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -70,5 +70,4 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/pop-before-smtp
 %attr(755,root,root) /etc/rc.d/init.d/popbsmtp
 %config(noreplace) %verify(not mtime size md5) /etc/sysconfig/popbsmtp
-
-%doc %{_mandir}/man8/*
+%{_mandir}/man8/*
