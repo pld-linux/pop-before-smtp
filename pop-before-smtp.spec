@@ -6,7 +6,7 @@ Version:	1.29
 Release:	3
 License:	freely distributable
 Group:		Networking/Daemons
-Source0:	http://prdownloads.sourceforge.net/popbsmtp/%{name}-%{version}.tar.gz
+Source0:	http://dl.sourceforge.net/popbsmtp/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Patch0:		%{name}-config.patch
@@ -16,11 +16,11 @@ Patch3:		%{name}-ignore_ipv6.patch
 Patch4:		%{name}-OK.patch
 Patch5:		%{name}-mappedv6.patch
 URL:		http://popbsmtp.sourceforge.net/
-Requires:	postfix
-Requires(preun):	/sbin/chkconfig
-Requires(post):	/sbin/chkconfig
 BuildRequires:	perl-devel
 BuildRequires:	perl-File-Tail
+PreReq:		rc-scripts
+Requires(post,preun):	/sbin/chkconfig
+Requires:	postfix
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
