@@ -1,0 +1,30 @@
+diff -urN pop-before-smtp-1.28/pop-before-smtp pop-before-smtp-1.28.dzikus/pop-before-smtp
+--- pop-before-smtp-1.28/pop-before-smtp	Tue Feb 19 10:13:10 2002
++++ pop-before-smtp-1.28.dzikus/pop-before-smtp	Tue Feb 19 10:15:35 2002
+@@ -148,7 +148,7 @@
+ pop-before-smtp watches /var/log/maillog for lines written by UW popd/imapd
+ describing successful login attempts, and installs entries for them in an
+ on-disk hash (DB) that is watched by postfix. It expires the entries after a
+-half-hour. The hash is named /etc/postfix/pop-before-smtp.db. The name, as
++half-hour. The hash is named /var/lib/popbsmtp/pop-before-smtp.db. The name, as
+ specified in the dbfile option, does not include the .db on the end, that's
+ tacked on to satisfy a wired-in assumption in postfix.
+ 
+@@ -230,7 +230,7 @@
+ The integration in /etc/postfix/main.cf might look like this:
+ 
+   smtpd_recipient_restrictions = permit_mynetworks,reject_non_fqdn_recipient,
+-        check_client_access hash:/etc/postfix/pop-before-smtp,
++        check_client_access hash:/var/lib/popbsmtp/pop-before-smtp,
+         check_relay_domains
+ 
+ A minor issue in the design of this daemon is that for simplicity
+@@ -369,7 +369,7 @@
+        spop3d => '^(... .. ..:..:..) \S+ spop3d\[\d+\]: ' .
+                'user \S+ authenticated - (\d+\.\d+\.\d+\.\d+)');
+ 
+-my $dbfile = '/etc/postfix/pop-before-smtp'; # DB hash to write
++my $dbfile = '/var/lib/popbsmtp/pop-before-smtp'; # DB hash to write
+ my $grace = 1800; # 30 minutes --- grace period
+ 
+ my $pattern_msg;
