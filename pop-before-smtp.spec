@@ -2,7 +2,7 @@
 Summary:	watch log for pop/imap auth, notify Postfix to allow relay
 Name:		pop-before-smtp
 Version:	1.21
-Release:	1
+Release:	2
 License:	Freely Redistributable
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
@@ -33,7 +33,6 @@ relaying for people who have recently downloaded their email.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-
 install -d $RPM_BUILD_ROOT{%{_sysconfdir}/{sysconfig,rc.d/init.d},%{_sbindir},%{_mandir}/man8}
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/popbsmtp
@@ -43,8 +42,7 @@ install pop-before-smtp $RPM_BUILD_ROOT%{_sbindir}/
 pod2man pop-before-smtp >$RPM_BUILD_ROOT%{_mandir}/man8/pop-before-smtp.8
 echo ".so pop-before-smtp" >$RPM_BUILD_ROOT%{_mandir}/man8/popbsmtp.8
 
-gzip -9nf README \
-	$RPM_BUILD_ROOT%{_mandir}/man8/*
+gzip -9nf README
 
 %post
 /sbin/chkconfig popbsmtp reset
