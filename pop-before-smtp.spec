@@ -2,12 +2,12 @@
 Summary:	Watch log for pop/imap auth, notify Postfix to allow relay
 Summary(pl):	Przesy³anie poczty przez postfiksa na podstawie logowañ przez POP/IMAP
 Name:		pop-before-smtp
-Version:	1.36
+Version:	1.29
 Release:	5
 License:	freely distributable
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/popbsmtp/%{name}-%{version}.tar.gz
-# Source0-md5:	f437144b4730072416459e4e51614759
+# Source0-md5:	012d7e9b4f73572eb499562ba252701d
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Patch0:		%{name}-config.patch
