@@ -1,0 +1,52 @@
+diff -durN pop-before-smtp-1.29.orig/pop-before-smtp pop-before-smtp-1.29/pop-before-smtp
+--- pop-before-smtp-1.29.orig/pop-before-smtp	Mon Apr 29 15:48:42 2002
++++ pop-before-smtp-1.29/pop-before-smtp	Mon Apr 29 15:49:58 2002
+@@ -145,7 +145,8 @@
+ =head1 SYNOPSIS
+ 
+   nohup pop-before-smtp [--[no]write] [--[no]debug] [--[no]flock] \
+-       [--logfile=filename] [--dbfile=filename] [--grace=seconds] &
++       [--logfile=filename] [--dbfile=filename] [--grace=seconds] \
++       [--[no]mappedv6] &
+ 
+ =head1 DESCRIPTION
+ 
+@@ -296,6 +297,7 @@
+ my $write = 1;
+ my $flock = 1;
+ my $debug = 0;
++my $mappedv6 = 0;
+ 
+ # File to watch for pop3d/imapd records
+ my $logfile = '/var/log/maillog';
+@@ -384,12 +386,13 @@
+     "write!" => \$write,
+     "debug!" => \$debug,
+     "flock!" => \$flock,
++    "mappedv6!" => \$mappedv6,
+     "logfile=s" => \$logfile,
+     "dbfile=s" => \$dbfile,
+     "grace=i" => \$grace,
+     "pattern-name=s" => \$pattern_name,
+     "second-pattern-name=s" => \$pattern_name2,
+-) or die "syntax: $0 [--[no]write] [--[no]debug] [--[no]flock] " .
++) or die "syntax: $0 [--[no]write] [--[no]debug] [--[no]flock] [--[no]mappedv6]" .
+     "[--logfile=filename] [--dbfile=filename] [--grace=seconds]" .
+ 	"[--pattern-name=name] [--second-pattern-name=name]\n" .
+        "Supported patterns: " .
+@@ -499,12 +502,14 @@
+     next if $already_enabled;
+     flock(DB_FH, LOCK_EX) or die "$0: flock LOCK_EX failed: $!\n" if $flock;
+     $db{$ipaddr} = "OK" if $write;
++    $db{"::ffff:".$ipaddr} = "OK" if $mappedv6 and $write;
+     print "\twritten OK\n" if $write and $debug;
+     while ($q[0][1] < time) {
+         if ($q[0][1] == $t{$q[0][0]}) {
+             print "purging ts=".localtime($q[0][1])." ip=$q[0][0]\n" if $debug;
+             delete $t{$q[0][0]};
+             delete $db{$q[0][0]} if $write;
++            delete $db{"::ffff:".$q[0][0]} if $mappedv6 and $write;
+         }
+         shift @q;
+     }
+
