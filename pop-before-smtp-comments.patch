@@ -1,0 +1,13 @@
+diff -ur pop-before-smtp-1.28/pop-before-smtp pop-before-smtp-1.28-/pop-before-smtp
+--- pop-before-smtp-1.28/pop-before-smtp	Thu Aug  9 14:53:42 2001
++++ pop-before-smtp-1.28-/pop-before-smtp	Thu Aug  9 14:52:55 2001
+@@ -457,7 +457,8 @@
+ my @mynets = cleanup_nets(`postconf mynetworks`);
+ while (my @tmp = grep { $mynets[$_] =~ m#^/# } 0..$#mynets) {
+     for (reverse @tmp) {
+-        splice @mynets, $_, 1, cleanup_nets(`cat $mynets[$_]`);
++        splice @mynets, $_, 1, 
++	       cleanup_nets(`perl -n -e '/^#/ or print' < $mynets[$_]`);
+     }
+ }
+     
