@@ -3,7 +3,7 @@ Summary:	watch log for pop/imap auth, notify Postfix to allow relay
 Summary(pl):	Przesy³anie poczty przez postfiksa na podstawie logowañ przez POP/IMAP
 Name:		pop-before-smtp
 Version:	1.28
-Release:	2
+Release:	3
 License:	Freely Redistributable
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
@@ -14,6 +14,7 @@ Source2:	%{name}.sysconfig
 Patch0:		%{name}-config.patch
 Patch1:		%{name}-comments.patch
 Requires:	postfix
+Prereq:		/sbin/chkconfig
 BuildRequires:	perl-devel
 BuildRequires:	perl-File-Tail
 BuildArch:	noarch
@@ -40,8 +41,6 @@ mo¿e zezwalaæ na wysy³anie przez niego poczty.
 %patch0 -p1 -b .wiget
 %patch1 -p1 -b .wiget
 
-%build
-
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir}/{sysconfig,rc.d/init.d},%{_sbindir},%{_mandir}/man8}
@@ -54,6 +53,9 @@ pod2man pop-before-smtp >$RPM_BUILD_ROOT%{_mandir}/man8/pop-before-smtp.8
 echo ".so pop-before-smtp" >$RPM_BUILD_ROOT%{_mandir}/man8/popbsmtp.8
 
 gzip -9nf README
+
+%clean
+rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/chkconfig popbsmtp reset
@@ -70,9 +72,6 @@ if [ "$1" = "0" ]; then
 	fi
 	/sbin/chkconfig --del popbsmtp 
 fi
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
