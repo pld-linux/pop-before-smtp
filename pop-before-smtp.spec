@@ -53,10 +53,20 @@ echo ".so pop-before-smtp" >$RPM_BUILD_ROOT%{_mandir}/man8/popbsmtp.8
 gzip -9nf README
 
 %post
-NAME=popbsmtp; DESC="%{name} daemon"; %chkconfig_add
+/sbin/chkconfig popbsmtp reset
+if [ -f /var/lock/subsys/popbsmtp ]; then
+	%{_sysconfdir}/rc.d/init.d/popbsmtp restart >&2 
+else
+	echo "Run \"/etc/rc.d/init.d/popbsmtp start\" to start pop-before-smtp daemon."
+fi
 
 %preun
-NAME=popbsmtp; %chkconfig_del
+if [ "$1" = "0" ]; then
+	if [ -f /var/lock/subsys/popbsmtp ]; then
+		/etc/rc.d/init.d/popbsmtp stop
+	fi
+	/sbin/chkconfig --del popbsmtp 
+fi
 
 %clean
 rm -rf $RPM_BUILD_ROOT
