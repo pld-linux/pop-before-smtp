@@ -1,0 +1,103 @@
+#!/bin/sh
+#
+# popbsmtp	This shell script takes care of starting and stopping
+#		pop-before-smtp service.
+#
+# chkconfig:	345 55 45
+# description:	pop-before-smtp watch logfiles and manipulate postfix \
+#		access map.
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+DBFILE="/etc/mail/pop-before-smtp"
+CYRUS="no"
+GRACE="1800"
+
+# Try get config..
+if [ -f /etc/sysconfig/popbsmtp ]; then
+     . /etc/sysconfig/popbsmtp
+fi     
+	
+# Check that networking is up.
+if is_no "${NETWORKING}"; then
+        # nls "ERROR: Networking is down. %s can't be run." <service>
+        msg_Network_Down "POP-before-SMTP"
+	exit 1
+fi
+
+if is_yes($CYRUS); then
+	$OPTIONS="--cyrus"
+fi
+if [ -n "$LOGFILE" ]; then
+	$OPTIONS="$OPTIONS --logfile=$LOGFILE"
+else
+	$OPTIONS="$OPTIONS --logfile=/var/log/mailog"
+fi
+if [ -n "$DBFILE" ]; then
+	$OPTIONS="$OPTIONS --dbfile=$DBFILE"
+else
+	$OPTIONS="$OPTIONS --dbfile=$DBFILE"
+fi
+if [ -n "$GRACE" ]; then 
+	$OPTIONS="$OPTIONS --grace=$GRACE"
+else
+	$OPTIONS="$OPTIONS --grace=180"
+fi
+
+# See how we were called.
+case "$1" in
+  start)
+	# Check if the service is already running?
+	if [ ! -f /var/lock/subsys/popbsmtp ]; then
+		msg_starting "POP-before-SMTP"
+		busy
+	 	/usr/sbin/pop-before-smtp $OPTIONS &
+		sleep 1
+		ps -C pop-before-smtp >/dev/null 2>&1
+		RETVAL=$?
+		CPID=$!
+		if [ $RETVAL -eq 0 ]; then
+			touch /var/lock/subsys/popbsmtp
+			echo $CPID >/var/run/pop-before-smtp.pid
+			deltext; ok;
+		else
+			deltext; fail;
+		fi
+	else
+		msg_Already_Running "POP-before-SMTP"
+		exit 1
+	fi
+
+        ;;
+  stop)
+        if [ -f /var/lock/subsys/popbsmtp ]; then
+        	msg_stopping "POP-before-SMTP"
+		#busy
+        	killproc pop-before-smtp
+		#deltext; ok;
+        	rm -f /var/lock/subsys/popbsmtp >/dev/null 2>&1
+        	rm -f /var/run/pop-before-smtp.pid >/dev/null 2>&1
+        else
+	        msg_Not_Running "POP-before-SMTP"
+                exit 1
+        fi
+															
+        ;;
+  status)
+  	status pop-before-smtp
+	exit $?
+	;;
+  restart)
+	$0 stop
+	$0 start
+	;;
+  *)
+        msg_Usage "$0 {start|stop|status|restart}"
+        exit 1
+esac
+
+exit $RETVAL
