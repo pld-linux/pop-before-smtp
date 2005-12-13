@@ -17,11 +17,11 @@ Patch3:		%{name}-ignore_ipv6.patch
 Patch4:		%{name}-OK.patch
 Patch5:		%{name}-mappedv6.patch
 URL:		http://popbsmtp.sourceforge.net/
-BuildRequires:	perl-devel
 BuildRequires:	perl-File-Tail
-PreReq:		rc-scripts
+BuildRequires:	perl-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	postfix
+Requires:	rc-scripts
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -89,7 +89,7 @@ fi
 %doc README
 %attr(755,root,root) %{_sbindir}/pop-before-smtp
 %attr(754,root,root) /etc/rc.d/init.d/popbsmtp
-%config(noreplace) %verify(not mtime size md5) /etc/sysconfig/popbsmtp
+%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/popbsmtp
 %{_mandir}/man8/*
 %dir %{_pkglibdir}
 %ghost %{_pkglibdir}/pop-before-smtp.db
