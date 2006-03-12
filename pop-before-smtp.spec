@@ -19,6 +19,7 @@ Patch5:		%{name}-mappedv6.patch
 URL:		http://popbsmtp.sourceforge.net/
 BuildRequires:	perl-File-Tail
 BuildRequires:	perl-devel
+BuildRequires:	rpmbuild(macros) >= 1.268
 Requires(post,preun):	/sbin/chkconfig
 Requires:	postfix
 Requires:	rc-scripts
@@ -70,17 +71,11 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/chkconfig --add popbsmtp
-if [ -f /var/lock/subsys/popbsmtp ]; then
-	/etc/rc.d/init.d/popbsmtp restart >&2
-else
-	echo "Run \"/etc/rc.d/init.d/popbsmtp start\" to start pop-before-smtp daemon."
-fi
+%service popbsmtp restart "pop-before-smtp daemon"
 
 %preun
 if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/popbsmtp ]; then
-		/etc/rc.d/init.d/popbsmtp stop
-	fi
+	%service popbsmtp stop
 	/sbin/chkconfig --del popbsmtp
 fi
 
