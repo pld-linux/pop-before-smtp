@@ -1,6 +1,6 @@
 %include	/usr/lib/rpm/macros.perl
 Summary:	Watch log for pop/imap auth, notify Postfix to allow relay
-Summary(pl):	Przesy³anie poczty przez postfiksa na podstawie logowañ przez POP/IMAP
+Summary(pl.UTF-8):   PrzesyÅ‚anie poczty przez postfiksa na podstawie logowaÅ„ przez POP/IMAP
 Name:		pop-before-smtp
 Version:	1.29
 Release:	6
@@ -38,11 +38,11 @@ looking for successful pop/imap logins, and posts the originating IP
 address into a database which can be checked by Postfix, to allow
 relaying for people who have recently downloaded their email.
 
-%description -l pl
-Pop-before-smtp obserwuje log systemu pocztowego, szukaj±c udanych
-zalogowañ przez protokó³ POP lub IMAP. Adres z którego nast±pi³o udane
-logowanie jest dopisywany do bazy danych, na podstawie której postfix
-mo¿e zezwalaæ na wysy³anie przez niego poczty.
+%description -l pl.UTF-8
+Pop-before-smtp obserwuje log systemu pocztowego, szukajÄ…c udanych
+zalogowaÅ„ przez protokÃ³Å‚ POP lub IMAP. Adres z ktÃ³rego nastÄ…piÅ‚o udane
+logowanie jest dopisywany do bazy danych, na podstawie ktÃ³rej postfix
+moÅ¼e zezwalaÄ‡ na wysyÅ‚anie przez niego poczty.
 
 %prep
 %setup -q
