@@ -1,4 +1,3 @@
-%include	/usr/lib/rpm/macros.perl
 Summary:	Watch log for pop/imap auth, notify Postfix to allow relay
 Summary(pl.UTF-8):	Przesyłanie poczty przez postfiksa na podstawie logowań przez POP/IMAP
 Name:		pop-before-smtp
